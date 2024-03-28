@@ -58,7 +58,7 @@ class HomeScreen extends ConsumerWidget {
                               ),
                             ),
                             onSubmitted: (value) async {
-                              context.go('/player/$value');
+                              context.push('/player/$value');
                             },
                           ),
                         ),

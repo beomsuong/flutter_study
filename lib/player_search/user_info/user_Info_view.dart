@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fmdakgg/player_search/user_info/user_Info_model.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class UserInfoView extends ConsumerStatefulWidget {
   final UserInfoModel userInfo;
@@ -17,7 +18,62 @@ class _UserInfoViewState extends ConsumerState<UserInfoView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Container(
+          color: Colors.grey[800],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 70.w,
+                height: 70.h,
+                child: Image.network(
+                    fit: BoxFit.fill,
+                    'http://10.0.2.2:3000/charactersImage/${widget.userInfo.userStats[0].characterStats[0].characterCode}'),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.userInfo.userStats[0].nickname,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  
+                  Text(
+                      '최근 업데이트: ${timeago.format(
+                        DateTime.now().subtract(
+                          DateTime.now().difference(widget.userInfo.time),
+                        ),
+                        locale: 'ko',
+                      )}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                      )),
+                ],
+              )
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Container(
+            height: 0.8.h,
+            width: 500.0,
+            color: Colors.grey,
+          ),
+        ),
         const Text('랭크'),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Container(
+            height: 0.8.h,
+            width: 500.0,
+            color: Colors.grey,
+          ),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -195,7 +195,7 @@ class _MatchResultsWidgetState extends State<MatchResultsWidget> {
                 color: Colors.grey,
                 child: Image.network(
                     fit: BoxFit.fill,
-                    'http://10.0.2.2:3000/weaponsImage/${userData.equipment!.s0}'),
+                    'http://10.0.2.2:3000/weaponsImage/${detailUserData.equipment!.s0}'),
               ),
             ),
             Padding(
@@ -206,7 +206,7 @@ class _MatchResultsWidgetState extends State<MatchResultsWidget> {
                 color: Colors.grey,
                 child: Image.network(
                     fit: BoxFit.fill,
-                    'http://10.0.2.2:3000/chestImage/${userData.equipment!.s1}'),
+                    'http://10.0.2.2:3000/chestImage/${detailUserData.equipment!.s1}'),
               ),
             ),
             Padding(
@@ -217,7 +217,7 @@ class _MatchResultsWidgetState extends State<MatchResultsWidget> {
                 color: Colors.grey,
                 child: Image.network(
                     fit: BoxFit.fill,
-                    'http://10.0.2.2:3000/headImage/${userData.equipment!.s2}'),
+                    'http://10.0.2.2:3000/headImage/${detailUserData.equipment!.s2}'),
               ),
             ),
             Padding(
@@ -228,7 +228,7 @@ class _MatchResultsWidgetState extends State<MatchResultsWidget> {
                 color: Colors.grey,
                 child: Image.network(
                     fit: BoxFit.fill,
-                    'http://10.0.2.2:3000/armImage/${userData.equipment!.s3}'),
+                    'http://10.0.2.2:3000/armImage/${detailUserData.equipment!.s3}'),
               ),
             ),
             Padding(
@@ -239,7 +239,7 @@ class _MatchResultsWidgetState extends State<MatchResultsWidget> {
                 color: Colors.grey,
                 child: Image.network(
                     fit: BoxFit.fill,
-                    'http://10.0.2.2:3000/legImage/${userData.equipment!.s4}'),
+                    'http://10.0.2.2:3000/legImage/${detailUserData.equipment!.s4}'),
               ),
             ),
           ],
