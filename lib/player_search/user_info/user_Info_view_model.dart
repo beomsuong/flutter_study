@@ -3,15 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fmdakgg/player_search/user_info/user_Info_model.dart';
 
 class UserInfoViewModel extends StateNotifier<AsyncValue<UserInfoModel>> {
-  final Dio dio = Dio();
-  final String nickName;
+  Dio dio = Dio();
+  String nickName;
 
   UserInfoViewModel(this.nickName) : super(const AsyncValue.loading()) {
-    fetchUserData(nickName);
+    fetchUserData();
   }
 
-  Future<void> fetchUserData(String nickName) async {
+  Future<void> fetchUserData() async {
     state = const AsyncValue.loading();
+    print("유저 데이터 요청");
+
     try {
       final response =
           await dio.get('http://10.0.2.2:3000/v1/user/stats/$nickName');

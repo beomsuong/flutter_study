@@ -8,9 +8,12 @@ class HomeScreenViewModel extends StateNotifier<HomeScreenModel> {
     if (query.isEmpty) {
       state = HomeScreenModel();
     } else {
-      final filteredList = state.characterList.where((character) {
-        return character.toLowerCase().contains(query.toLowerCase());
+      final filteredList = HomeScreenModel().characterList.where((character) {
+        final searchLower = query.toLowerCase();
+        final characterLower = character.toLowerCase();
+        return characterLower.contains(searchLower);
       }).toList();
+      print('필터링된 목록: $filteredList');
       state = state.copyWith(characterList: filteredList);
     }
   }

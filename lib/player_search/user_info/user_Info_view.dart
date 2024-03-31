@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fmdakgg/define.dart';
+import 'package:fmdakgg/player_search/match_result/game_Info_model.dart';
+import 'package:fmdakgg/player_search/match_result/match_results_view_model.dart';
+import 'package:fmdakgg/player_search/player_search.dart';
 import 'package:fmdakgg/player_search/user_info/user_Info_model.dart';
+import 'package:fmdakgg/player_search/user_info/user_Info_view_model.dart';
+
 import 'package:timeago/timeago.dart' as timeago;
 
 class UserInfoView extends ConsumerStatefulWidget {
@@ -24,8 +30,8 @@ class _UserInfoViewState extends ConsumerState<UserInfoView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: 70.w,
-                height: 70.h,
+                width: 100.w,
+                height: 100.h,
                 child: Image.network(
                     fit: BoxFit.fill,
                     'http://10.0.2.2:3000/charactersImage/${widget.userInfo.userStats[0].characterStats[0].characterCode}'),
@@ -41,7 +47,42 @@ class _UserInfoViewState extends ConsumerState<UserInfoView> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        ref
+                            .read(userInfoModelProvider(widget
+                                    .userInfo.userStats[0].nickname
+                                    .toLowerCase())
+                                .notifier)
+                            .fetchUserData();
+                        ref
+                            .watch(matchResultsViewModelProvider(widget
+                                    .userInfo.userStats[0].nickname
+                                    .toLowerCase())
+                                .notifier)
+                            .fetchGameData();
+                      },
+                      child: Container(
+                        width: 80.w,
+                        height: 35.h,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          color: Color(0xFF11B288),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            '전적 갱신',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Text(
                       '최근 업데이트: ${timeago.format(
                         DateTime.now().subtract(
@@ -58,7 +99,7 @@ class _UserInfoViewState extends ConsumerState<UserInfoView> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          padding: const EdgeInsets.only(bottom: 16.0, top: 3),
           child: Container(
             height: 0.8.h,
             width: 500.0,
@@ -90,8 +131,17 @@ class _UserInfoViewState extends ConsumerState<UserInfoView> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${widget.userInfo.userStats[0].mmr} RP'),
-                const Text('데미갓 - 256RP'),
+                Text(
+                  '${widget.userInfo.userStats[0].mmr} RP',
+                  style: TextStyle(
+                      color: const Color(0xFFCA9372),
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700),
+                ),
+                const Text(
+                  '데미갓 - 256RP',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
                 Text(
                     '${widget.userInfo.userStats[0].rank}위 (상위 ${(widget.userInfo.userStats[0].rank / widget.userInfo.userStats[0].rankSize * 100).toStringAsFixed(2)})%')
               ],
@@ -394,10 +444,146 @@ class _UserInfoViewState extends ConsumerState<UserInfoView> {
                         '#${widget.userInfo.userStats[0].averageRank.toString()}')
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
+        Container(
+            width: double.infinity,
+            color: const Color(0xFF4C4F5D),
+            child: const Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                '실험체 통계',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              ),
+            )),
+        Container(
+          width: double.infinity,
+          color: const Color(0xFF363944),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 160.w,
+                child: const Padding(
+                  padding: EdgeInsets.all(14.0),
+                  child: Text(
+                    '실험체',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 50.w,
+                child: const Text(
+                  '승률',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w600),
+                ),
+              ),
+              SizedBox(
+                width: 60.w,
+                child: const Center(
+                  child: Text(
+                    '최고킬',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 60.w,
+                child: const Center(
+                  child: Text(
+                    'top3',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 60.w,
+                child: const Center(
+                  child: Text(
+                    '평균순위',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        for (var i in widget.userInfo.userStats[0].characterStats)
+          Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: Colors.grey),
+              ),
+            ),
+            width: double.infinity,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 160.w,
+                  child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(100.0),
+                            child: Container(
+                              color: Colors.grey,
+                              width: 40.w,
+                              height: 40.h,
+                              child: Image.network(
+                                  'http://10.0.2.2:3000/charactersImage/${i.characterCode}'),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5.w,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(defineCharacterList[i.characterCode - 1]),
+                              Text('${i.totalGames.toString()} 게임')
+                            ],
+                          )
+                        ],
+                      )),
+                ),
+                SizedBox(
+                    width: 50.w,
+                    child: Text(
+                        '${(i.wins / i.totalGames * 100).toStringAsFixed(1)}%')),
+                SizedBox(
+                  width: 60.w,
+                  child: Center(
+                    child: Text(
+                      i.maxKillings.toString(),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                    width: 60.w,
+                    child: Center(
+                      child: Text(
+                          '${(i.top3 / i.totalGames * 100).toStringAsFixed(1)}%'),
+                    )),
+                SizedBox(
+                  width: 60.w,
+                  child: Center(
+                    child: Text(
+                      i.averageRank.toString(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }

@@ -7,16 +7,18 @@ class MatchResultsViewModel
   final Dio dio = Dio();
   final String nickname;
   MatchResultsViewModel(this.nickname) : super(const AsyncValue.loading()) {
-    fetchGameData(nickname);
+    fetchGameData();
   }
 
-  Future<void> fetchGameData(String nickname) async {
+  Future<void> fetchGameData() async {
     state = const AsyncValue.loading();
-
+    print('게임 데이터');
     try {
       final response = await dio.get('http://10.0.2.2:3000/player/$nickname');
 
       if (response.statusCode == 200) {
+        print('게임 데이터 성공');
+
         final gameInfoList = List<GameInfoModel>.from(
             (response.data['gameData'] as List).map((item) =>
                 GameInfoModel.fromJson(item,

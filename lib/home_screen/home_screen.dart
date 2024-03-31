@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fmdakgg/home_screen/home_screen_model.dart';
 import 'package:fmdakgg/home_screen/home_screen_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -151,23 +152,48 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(
                 height: 300,
                 child: SingleChildScrollView(
-                  child: Wrap(
-                    children: homeScreenModel.characterList.map((character) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 60,
-                              width: 60,
-                              color:
-                                  Colors.black, // 이 부분은 필요에 따라 캐릭터의 이미지로 대체 가능
-                            ),
-                            Text(character) // 캐릭터 이름
-                          ],
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 394.6.w,
+                        child: Wrap(
+                          children: homeScreenModel.characterList
+                              .asMap()
+                              .entries
+                              .map((entry) {
+                            int idx = entry.key;
+                            String character = entry.value;
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      print("클릭 $character");
+                                      ref
+                                          .read(homeScreenViewModelProvider
+                                              .notifier)
+                                          .filterCharacters(character);
+                                      searchController.text = character;
+                                    },
+                                    child: Container(
+                                      height: 60,
+                                      width: 60,
+                                      color: Colors.black,
+                                      // child: Image.network(
+                                      //   'http://10.0.2.2:3000/charactersImage/${idx + 1}',
+                                      //   fit: BoxFit.fill,
+                                      // ),
+                                    ),
+                                  ),
+                                  Text(character) // 캐릭터 이름 출력
+                                ],
+                              ),
+                            );
+                          }).toList(),
                         ),
-                      );
-                    }).toList(),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -204,9 +230,11 @@ class HomeScreen extends ConsumerWidget {
                             const SizedBox(
                               width: 5,
                             ),
-                            const Text(
-                              '캐릭터명',
-                              style: TextStyle(
+                            Text(
+                              homeScreenModel.characterList.length == 1
+                                  ? homeScreenModel.characterList[0]
+                                  : '캐릭터명',
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                               ),

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fmdakgg/player_search/match_result/game_Info_model.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class MatchResultsWidget extends StatefulWidget {
+class MatchResultsWidget extends ConsumerStatefulWidget {
   final GameInfoModel gameInfo;
   const MatchResultsWidget({super.key, required this.gameInfo});
 
   @override
-  State<MatchResultsWidget> createState() => _MatchResultsWidgetState();
+  ConsumerState<MatchResultsWidget> createState() => _MatchResultsWidgetState();
 }
 
-class _MatchResultsWidgetState extends State<MatchResultsWidget> {
+class _MatchResultsWidgetState extends ConsumerState<MatchResultsWidget> {
   late UserGames userData;
   List<Color> gameRankColors = [
     const Color(0xFF11B288), //1등
@@ -375,8 +376,8 @@ class _MatchResultsWidgetState extends State<MatchResultsWidget> {
                                               BorderRadius.circular(100.0),
                                           child: Container(
                                             color: Colors.grey,
-                                            width: 40,
-                                            height: 40,
+                                            width: 40.w,
+                                            height: 40.h,
                                             child: Image.network(
                                                 'http://10.0.2.2:3000/charactersImage/${userData.characterNum}'),
                                           ),

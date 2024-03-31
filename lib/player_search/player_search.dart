@@ -8,6 +8,18 @@ import 'package:fmdakgg/player_search/user_info/user_Info_view.dart';
 import 'package:fmdakgg/player_search/user_info/user_Info_view_model.dart';
 import 'package:fmdakgg/player_search/user_info/user_Info_model.dart';
 
+final matchResultsViewModelProvider = StateNotifierProvider.family<
+    MatchResultsViewModel, AsyncValue<List<GameInfoModel>>, String>(
+  (ref, nickname) {
+    return MatchResultsViewModel(nickname);
+  },
+);
+
+final userInfoModelProvider = StateNotifierProvider.family<UserInfoViewModel,
+    AsyncValue<UserInfoModel>, String>(
+  (ref, nickname) => UserInfoViewModel(nickname),
+);
+
 class PlayerSearch extends ConsumerStatefulWidget {
   final String nickname;
   const PlayerSearch({required this.nickname, super.key});
@@ -17,18 +29,6 @@ class PlayerSearch extends ConsumerStatefulWidget {
 }
 
 class _PlayerSearchState extends ConsumerState<PlayerSearch> {
-  final matchResultsViewModelProvider = StateNotifierProvider.family<
-      MatchResultsViewModel, AsyncValue<List<GameInfoModel>>, String>(
-    (ref, nickname) {
-      return MatchResultsViewModel(nickname);
-    },
-  );
-
-  final userInfoModelProvider = StateNotifierProvider.family<UserInfoViewModel,
-      AsyncValue<UserInfoModel>, String>(
-    (ref, nickname) => UserInfoViewModel(nickname),
-  );
-
   @override
   void initState() {
     super.initState();
@@ -36,6 +36,7 @@ class _PlayerSearchState extends ConsumerState<PlayerSearch> {
 
   @override
   Widget build(BuildContext context) {
+    print("전적화면 다시그림");
     final gameInfoAsyncValue =
         ref.watch(matchResultsViewModelProvider(widget.nickname));
     final userInfoAsyncValue =
@@ -45,6 +46,18 @@ class _PlayerSearchState extends ConsumerState<PlayerSearch> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  ref
+                      .read(userInfoModelProvider(widget.nickname).notifier)
+                      .fetchUserData();
+                  ref
+                      .read(matchResultsViewModelProvider(widget.nickname)
+                          .notifier)
+                      .fetchGameData();
+                },
+              ),
               userInfoAsyncValue.when(
                 data: (userInfo) {
                   return UserInfoView(userInfo: userInfo);
