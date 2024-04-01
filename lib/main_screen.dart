@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fmdakgg/home_screen/home_screen.dart';
+import 'package:fmdakgg/messange_screen/message_screen.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -11,13 +12,17 @@ class MainScreen extends ConsumerStatefulWidget {
 
 class _MainScreenState extends ConsumerState<MainScreen> {
   int selectedItem = 0;
-  final List<Widget> widgetOption = [const HomeScreen()];
+  final List<Widget> widgetOption = [const HomeScreen(), const MessageScreen()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: widgetOption.elementAt(selectedItem),
         bottomNavigationBar: BottomNavigationBar(
+            onTap: (value) {
+              selectedItem = value;
+              setState(() {});
+            },
             type: BottomNavigationBarType.fixed,
             currentIndex: selectedItem,
             showUnselectedLabels: true,
