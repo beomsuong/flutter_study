@@ -48,6 +48,7 @@ dependencies:
   riverpod_generator: ^2.4.0
   riverpod_lint: ^2.3.10
   web_socket_channel: ^2.4.0
+  socket_io_client: ^2.0.3+1
 
 dev_dependencies:
   flutter_test:
