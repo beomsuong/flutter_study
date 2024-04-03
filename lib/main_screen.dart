@@ -14,6 +14,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   int selectedItem = 0;
   final List<Widget> widgetOption = [const HomeScreen(), const MessageScreen()];
 
+  void _onItemTapped(int index) {
+    setState(() {
+      selectedItem = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +29,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               selectedItem = value;
               setState(() {});
             },
-            type: BottomNavigationBarType.fixed,
             currentIndex: selectedItem,
             showUnselectedLabels: true,
             selectedFontSize: 12,
