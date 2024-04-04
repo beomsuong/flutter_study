@@ -1,21 +1,27 @@
 class RoomListModel {
-  final String lastMsg;
   final String roomName;
+  final String lastMsg;
+  final DateTime lastTime;
 
-  RoomListModel({required this.roomName, required this.lastMsg});
+  RoomListModel({
+    required this.roomName,
+    required this.lastMsg,
+    required this.lastTime,
+  });
 
-  // JSON에서 Message 객체로 변환하는 fromJson 생성자
-  factory RoomListModel.fromJson(Map<String, dynamic> json) {
+  factory RoomListModel.fromJson(String roomName, Map<String, dynamic> json) {
     return RoomListModel(
-      roomName: json['roomName'] as String,
+      roomName: roomName,
       lastMsg: json['lastMsg'] as String,
+      lastTime: DateTime.parse(json['lastTime']),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'lastMsg': lastMsg,
       'roomName': roomName,
+      'lastMsg': lastMsg,
+      'lastTime': lastTime.toIso8601String(),
     };
   }
 }
