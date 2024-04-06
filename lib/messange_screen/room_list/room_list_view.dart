@@ -66,6 +66,8 @@ class _RoomListViewState extends ConsumerState<RoomListView> {
                         Text(
                           roomList[index].lastMsg,
                           style: TextStyle(fontSize: 14.sp),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         )
                       ],
                     ),

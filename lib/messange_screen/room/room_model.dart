@@ -3,19 +3,21 @@ class MessageModel {
   final String text;
   final String roomName;
   final String nickName;
+  final DateTime? createdAt;
 
-  MessageModel({
-    required this.userId,
-    required this.text,
-    required this.roomName,
-    required this.nickName,
-  });
+  MessageModel(
+      {required this.userId,
+      required this.text,
+      required this.roomName,
+      required this.nickName,
+      this.createdAt});
   factory MessageModel.fromJson(String roomName, Map<String, dynamic> json) {
     return MessageModel(
       roomName: roomName,
       userId: json['userId'] as String,
       text: json['text'] as String,
       nickName: json['nickName'] as String,
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
@@ -24,7 +26,8 @@ class MessageModel {
       'roomName': roomName,
       'userId': userId,
       'text': text,
-      'nickName': nickName
+      'nickName': nickName,
+      'createdAt': createdAt
     };
   }
 }
