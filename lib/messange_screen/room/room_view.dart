@@ -30,6 +30,7 @@ class _RoomViewState extends ConsumerState<RoomView> {
   @override
   Widget build(BuildContext context) {
     final messages = ref.watch(roomViewModelProvider(widget.roomName));
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.roomName),
@@ -45,13 +46,19 @@ class _RoomViewState extends ConsumerState<RoomView> {
                   controller: scrollController,
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
-                    return MessageWidget(messageData: messages[index]);
+                    return MessageWidget(
+                      messageData: messages[index],
+                      userId: ref
+                          .read(roomViewModelProvider(widget.roomName).notifier)
+                          .socket
+                          .id
+                          .toString(),
+                    );
                   },
                 ),
               ),
               TextField(
                 controller: _controller,
-                decoration: const InputDecoration(labelText: 'Send a message'),
               ),
               ElevatedButton(
                 onPressed: () {
