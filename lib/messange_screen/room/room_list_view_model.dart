@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fmdakgg/messange_screen/room/room_model.dart';
+import 'package:fmdakgg/messange_screen/room_list/room_list_view.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 class MessageListViewModel extends StateNotifier<List<MessageModel>> {
@@ -22,9 +23,15 @@ class MessageListViewModel extends StateNotifier<List<MessageModel>> {
 
     socket.on('chat message', (data) {
       print('메시지 수신 $data');
-      final message = MessageModel.fromJson(roomName, data);
-      messageList.add(message);
-      state = [...state, message]; //상태 갱신
+      try {
+        final message = MessageModel.fromJson(roomName, data);
+        messageList.add(message);
+        state = [...state, message]; //상태 갱신
+      } catch (e) {
+        print('실패 $e');
+      }
+
+      //}
     });
 
     socket.onDisconnect((_) => print('Socket 연결 해제됨'));
@@ -32,6 +39,7 @@ class MessageListViewModel extends StateNotifier<List<MessageModel>> {
 
   void sendMessage(String text) {
     socket.emit('chat message', {
+      'type': 'message',
       'text': text,
       'roomName': roomName,
       'userId': socket.id,

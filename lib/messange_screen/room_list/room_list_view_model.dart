@@ -28,7 +28,6 @@ class RoomListViewModel extends StateNotifier<List<RoomListModel>> {
           final roomData = Map<String, dynamic>.from(entry.value);
           return RoomListModel.fromJson(entry.key, roomData);
         }).toList();
-
         state = roomList;
       });
 

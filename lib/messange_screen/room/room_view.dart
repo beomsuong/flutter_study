@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fmdakgg/messange_screen/room/message_widget.dart';
 import 'package:fmdakgg/messange_screen/room/room_list_view_model.dart';
 import 'package:fmdakgg/messange_screen/room/room_model.dart';
+import 'package:fmdakgg/messange_screen/room_list/room_list_view.dart';
 
 class RoomView extends ConsumerStatefulWidget {
   final String roomName;
-
-  const RoomView({Key? key, required this.roomName}) : super(key: key);
+  final int numberOfPeople;
+  const RoomView(
+      {Key? key, required this.roomName, required this.numberOfPeople})
+      : super(key: key);
 
   @override
   _RoomViewState createState() => _RoomViewState();
@@ -31,9 +35,21 @@ class _RoomViewState extends ConsumerState<RoomView> {
   Widget build(BuildContext context) {
     final messages = ref.watch(roomViewModelProvider(widget.roomName));
 
+    ref.watch(roomListViewModelProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.roomName),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(widget.roomName),
+            messages.isEmpty
+                ? Text('${widget.numberOfPeople}명')
+                : Text(
+                    '${messages.last.numberOfPeople.toString()}명',
+                    style: TextStyle(fontSize: 18.sp),
+                  )
+          ],
+        ),
       ),
       body: Container(
         color: Colors.blue[100],

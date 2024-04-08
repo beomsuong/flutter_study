@@ -12,10 +12,10 @@ class MessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (messageData.userId == userId) {
-      return myMessage();
-    } else if (messageData.nickName == '시스템') {
+    if (messageData.type == 'system') {
       return systemMessage();
+    } else if (messageData.userId == userId) {
+      return myMessage();
     } else {
       return message();
     }
@@ -84,7 +84,7 @@ class MessageWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            messageData.nickName,
+            messageData.nickName!,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           Padding(

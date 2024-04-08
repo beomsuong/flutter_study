@@ -7,6 +7,11 @@ import 'package:fmdakgg/messange_screen/room_list/room_list_model.dart';
 import 'package:fmdakgg/messange_screen/room_list/room_list_view_model.dart';
 import 'package:intl/intl.dart';
 
+final roomListViewModelProvider =
+    StateNotifierProvider<RoomListViewModel, List<RoomListModel>>((ref) {
+  return RoomListViewModel();
+});
+
 class RoomListView extends ConsumerStatefulWidget {
   const RoomListView({super.key});
 
@@ -15,10 +20,6 @@ class RoomListView extends ConsumerStatefulWidget {
 }
 
 class _RoomListViewState extends ConsumerState<RoomListView> {
-  final roomListViewModelProvider =
-      StateNotifierProvider<RoomListViewModel, List<RoomListModel>>((ref) {
-    return RoomListViewModel();
-  });
   @override
   Widget build(BuildContext context) {
     final roomList = ref.watch(roomListViewModelProvider);
@@ -32,8 +33,9 @@ class _RoomListViewState extends ConsumerState<RoomListView> {
               onTap: () async {
                 await Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => RoomView(
-                          roomName: roomList[index].roomName,
-                        )));
+                        roomName: roomList[index].roomName,
+                        numberOfPeople:
+                            roomList[index].numberOfPeople as int)));
                 ref.read(roomListViewModelProvider.notifier).getRoomList();
               },
               child: SizedBox(
@@ -50,10 +52,20 @@ class _RoomListViewState extends ConsumerState<RoomListView> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              roomList[index].roomName,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 14.sp),
+                            Row(
+                              children: [
+                                Text(
+                                  roomList[index].roomName,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14.sp),
+                                ),
+                                Text(
+                                  ' ${roomList[index].numberOfPeople}명',
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 12.sp),
+                                ),
+                              ],
                             ),
                             Text(
                               DateFormat("M월 d일 HH:mm")
