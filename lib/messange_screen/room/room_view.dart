@@ -6,6 +6,8 @@ import 'package:fmdakgg/messange_screen/room/room_list_view_model.dart';
 import 'package:fmdakgg/messange_screen/room/room_model.dart';
 import 'package:fmdakgg/messange_screen/room_list/room_list_view.dart';
 
+ScrollController scrollController = ScrollController();
+
 class RoomView extends ConsumerStatefulWidget {
   final String roomName;
   final int numberOfPeople;
@@ -25,29 +27,67 @@ class _RoomViewState extends ConsumerState<RoomView> {
       List<MessageModel>,
       String>((ref, roomName) => MessageListViewModel(roomName));
 
-  ScrollController scrollController = ScrollController();
+  bool showMoveBottom = false;
+
   @override
   void initState() {
+    scrollController.addListener(_scrollListener);
+
     super.initState();
+  }
+
+  void _scrollListener() {
+    if (mounted) {
+      setState(() {
+        showMoveBottom =
+            scrollController.offset < scrollController.position.maxScrollExtent;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final messages = ref.watch(roomViewModelProvider(widget.roomName));
+    final viewModel =
+        ref.watch(roomViewModelProvider(widget.roomName).notifier);
 
-    ref.watch(roomListViewModelProvider);
     return Scaffold(
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(widget.roomName),
-            messages.isEmpty
-                ? Text('${widget.numberOfPeople}명')
-                : Text(
-                    '${messages.last.numberOfPeople.toString()}명',
-                    style: TextStyle(fontSize: 18.sp),
-                  )
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.roomName,
+                  style: TextStyle(fontSize: 18.sp),
+                ),
+                messages.isEmpty
+                    ? Text(
+                        '${widget.numberOfPeople}명',
+                        style: TextStyle(fontSize: 12.sp),
+                      )
+                    : Text(
+                        '${messages.last.numberOfPeople.toString()}명',
+                        style: TextStyle(fontSize: 12.sp),
+                      )
+              ],
+            ),
+            GestureDetector(
+              onTap: () {
+                viewModel.changeNickname('키아라 고수');
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const AlertDialog(
+                      title: Text('목표 성공'),
+                    );
+                  },
+                );
+              },
+              child: const Icon(Icons.settings),
+            )
           ],
         ),
       ),
@@ -58,19 +98,43 @@ class _RoomViewState extends ConsumerState<RoomView> {
           child: Column(
             children: <Widget>[
               Expanded(
-                child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    return MessageWidget(
-                      messageData: messages[index],
-                      userId: ref
-                          .read(roomViewModelProvider(widget.roomName).notifier)
-                          .socket
-                          .id
-                          .toString(),
-                    );
-                  },
+                child: Stack(
+                  children: [
+                    ListView.builder(
+                      controller: scrollController,
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        return MessageWidget(
+                          messageData: messages[index],
+                          userId: ref
+                              .read(roomViewModelProvider(widget.roomName)
+                                  .notifier)
+                              .socket
+                              .id
+                              .toString(),
+                        );
+                      },
+                    ),
+                    if (showMoveBottom)
+                      Positioned(
+                        bottom: 0,
+                        left: (MediaQuery.of(context).size.width / 2) - 40,
+                        child: GestureDetector(
+                          onTap: () => scrollController.jumpTo(
+                              scrollController.position.maxScrollExtent),
+                          child: Container(
+                            width: 30.w,
+                            height: 30.h,
+                            decoration: const BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(100),
+                                )),
+                            child: const Icon(Icons.arrow_downward),
+                          ),
+                        ),
+                      )
+                  ],
                 ),
               ),
               TextField(
