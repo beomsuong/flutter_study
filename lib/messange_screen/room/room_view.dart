@@ -50,7 +50,7 @@ class _RoomViewState extends ConsumerState<RoomView> {
     final messages = ref.watch(roomViewModelProvider(widget.roomName));
     final viewModel =
         ref.watch(roomViewModelProvider(widget.roomName).notifier);
-
+    viewModel.numberOfPeople = widget.numberOfPeople;
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -63,25 +63,42 @@ class _RoomViewState extends ConsumerState<RoomView> {
                   widget.roomName,
                   style: TextStyle(fontSize: 18.sp),
                 ),
-                messages.isEmpty
-                    ? Text(
-                        '${widget.numberOfPeople}명',
-                        style: TextStyle(fontSize: 12.sp),
-                      )
-                    : Text(
-                        '${messages.last.numberOfPeople.toString()}명',
-                        style: TextStyle(fontSize: 12.sp),
-                      )
+                Text(
+                  '${viewModel.numberOfPeople}명',
+                  style: TextStyle(fontSize: 12.sp),
+                )
               ],
             ),
             GestureDetector(
               onTap: () {
-                viewModel.changeNickname('키아라 고수');
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return const AlertDialog(
-                      title: Text('목표 성공'),
+                    String inputNickname = '';
+
+                    return AlertDialog(
+                      title: const Text('닉네임 수정'),
+                      content: TextField(
+                        onChanged: (value) {
+                          inputNickname = value;
+                        },
+                        decoration: const InputDecoration(hintText: "새 닉네임 입력"),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('취소'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('수정'),
+                          onPressed: () {
+                            viewModel.changeNickname(inputNickname);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
                     );
                   },
                 );
@@ -138,28 +155,47 @@ class _RoomViewState extends ConsumerState<RoomView> {
                 ),
               ),
               TextField(
-                controller: _controller,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_controller.text.isNotEmpty) {
-                    ref
-                        .read(roomViewModelProvider(widget.roomName).notifier)
-                        .sendMessage(_controller.text);
-                    _controller.clear();
-                    Future.delayed(const Duration(milliseconds: 100), () {
-                      if (scrollController.hasClients) {
-                        scrollController.animateTo(
-                          scrollController.position.maxScrollExtent,
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeOut,
-                        );
-                      }
-                    });
-                  }
-                },
-                child: const Text('Send Message'),
-              ),
+                  controller: _controller,
+                  onSubmitted: (value) {
+                    if (_controller.text.isNotEmpty) {
+                      ref
+                          .read(roomViewModelProvider(widget.roomName).notifier)
+                          .sendMessage(_controller.text);
+                      _controller.clear();
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        if (scrollController.hasClients) {
+                          scrollController.animateTo(
+                            scrollController.position.maxScrollExtent,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                          );
+                        }
+                      });
+                    }
+                  },
+                  decoration: InputDecoration(
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        if (_controller.text.isNotEmpty) {
+                          ref
+                              .read(roomViewModelProvider(widget.roomName)
+                                  .notifier)
+                              .sendMessage(_controller.text);
+                          _controller.clear();
+                          Future.delayed(const Duration(milliseconds: 100), () {
+                            if (scrollController.hasClients) {
+                              scrollController.animateTo(
+                                scrollController.position.maxScrollExtent,
+                                duration: const Duration(milliseconds: 200),
+                                curve: Curves.easeOut,
+                              );
+                            }
+                          });
+                        }
+                      },
+                      child: const Icon(Icons.send),
+                    ),
+                  )),
             ],
           ),
         ),

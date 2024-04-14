@@ -11,7 +11,7 @@ class MessageListViewModel extends StateNotifier<List<MessageModel>> {
   String nickName = '자히르장인';
   List<MessageModel> messageList = [];
   bool showDialog = false;
-
+  int numberOfPeople = 0;
   MessageListViewModel(this.roomName) : super([]) {
     getMessageList();
   }
@@ -33,6 +33,7 @@ class MessageListViewModel extends StateNotifier<List<MessageModel>> {
                 roomName, Map<String, dynamic>.from(messageData));
           }).toList();
           messages.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
+          //이전 메시지 수신 후 정렬
           state = [...state, ...messages];
         } catch (e) {
           print('메시지 변환 실패 $e');
