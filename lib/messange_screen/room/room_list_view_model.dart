@@ -68,6 +68,16 @@ class MessageListViewModel extends StateNotifier<List<MessageModel>> {
     });
   }
 
+  void exitRoom(String text) {
+    socket.emit('chat message', {
+      'type': 'system',
+      'text': text,
+      'roomName': roomName,
+      'userId': socket.id,
+      'nickName': nickName
+    });
+  }
+
   void changeNickname(String inputNickName) {
     nickName = inputNickName;
     state = [...state];
