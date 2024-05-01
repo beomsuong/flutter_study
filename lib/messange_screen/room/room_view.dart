@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fmdakgg/messange_screen/room/message_widget.dart';
-import 'package:fmdakgg/messange_screen/room/room_list_view_model.dart';
+import 'package:fmdakgg/messange_screen/room/room_view_model.dart';
 import 'package:fmdakgg/messange_screen/room/room_model.dart';
 import 'package:fmdakgg/messange_screen/room_list/room_list_view.dart';
+import 'package:go_router/go_router.dart';
 
 ScrollController scrollController = ScrollController();
 
 class RoomView extends ConsumerStatefulWidget {
   final String roomName;
-  final int numberOfPeople;
-  const RoomView(
-      {Key? key, required this.roomName, required this.numberOfPeople})
-      : super(key: key);
+  const RoomView({Key? key, required this.roomName}) : super(key: key);
 
   @override
   _RoomViewState createState() => _RoomViewState();
@@ -50,9 +48,15 @@ class _RoomViewState extends ConsumerState<RoomView> {
     final messages = ref.watch(roomViewModelProvider(widget.roomName));
     final viewModel =
         ref.watch(roomViewModelProvider(widget.roomName).notifier);
-    viewModel.numberOfPeople = widget.numberOfPeople;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            viewModel.exitRoom();
+            context.pop();
+          },
+        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

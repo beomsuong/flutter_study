@@ -12,6 +12,7 @@ class MessageListViewModel extends StateNotifier<List<MessageModel>> {
   List<MessageModel> messageList = [];
   bool showDialog = false;
   int numberOfPeople = 0;
+
   MessageListViewModel(this.roomName) : super([]) {
     getMessageList();
   }
@@ -27,6 +28,7 @@ class MessageListViewModel extends StateNotifier<List<MessageModel>> {
     socket.on('chat message', (data) {
       print('메시지 수신 $data');
       if (data is List) {
+        //방 입장 시 최근 메시지 수신
         try {
           final messages = data.map((messageData) {
             return MessageModel.fromJson(
@@ -34,14 +36,20 @@ class MessageListViewModel extends StateNotifier<List<MessageModel>> {
           }).toList();
           messages.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
           //이전 메시지 수신 후 정렬
+          numberOfPeople = messages.last.numberOfPeople as int;
           state = [...state, ...messages];
         } catch (e) {
           print('메시지 변환 실패 $e');
         }
       } else {
+        //메시지 하나씩 수신 시
         try {
           final message = MessageModel.fromJson(roomName, data);
           messageList.add(message);
+          if (messageList.last.numberOfPeople != null) {
+            numberOfPeople = messageList.last.numberOfPeople as int;
+          }
+
           state = [...state, message];
         } catch (e) {
           print('실패 $e');
@@ -54,8 +62,6 @@ class MessageListViewModel extends StateNotifier<List<MessageModel>> {
         }
       });
     });
-
-    socket.onDisconnect((_) => print('Socket 연결 해제됨'));
   }
 
   void sendMessage(String text) {
@@ -68,14 +74,15 @@ class MessageListViewModel extends StateNotifier<List<MessageModel>> {
     });
   }
 
-  void exitRoom(String text) {
+  void exitRoom() {
     socket.emit('chat message', {
       'type': 'system',
-      'text': text,
+      'text': '$roomName님이 퇴장하셨습니다.',
       'roomName': roomName,
       'userId': socket.id,
       'nickName': nickName
     });
+    socket.close();
   }
 
   void changeNickname(String inputNickName) {

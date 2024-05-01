@@ -33,9 +33,8 @@ class _RoomListViewState extends ConsumerState<RoomListView> {
               onTap: () async {
                 await Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => RoomView(
-                        roomName: roomList[index].roomName,
-                        numberOfPeople:
-                            roomList[index].numberOfPeople as int)));
+                          roomName: roomList[index].roomName,
+                        )));
                 ref.read(roomListViewModelProvider.notifier).getRoomList();
               },
               child: SizedBox(
